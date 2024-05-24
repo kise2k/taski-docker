@@ -88,6 +88,30 @@ docker compose -f docker-compose.yml exec backend python manage.py migrate
 docker compose -f docker-compose.yml exec backend python manage.py collectstatic
 ```
 
+## Workflow
+
+Для использования Continuous Integration (CI) и Continuous Deployment (CD): в репозитории GitHub Actions Settings/Secrets/Actions создайте Secrets - переменные окружения для доступа к сервисам:
+
+```bash
+DOCKER_USERNAME                # имя пользователя в DockerHub
+DOCKER_PASSWORD                # пароль пользователя в DockerHub
+HOST                           # ip_address сервера
+USER                           # имя пользователя
+SSH_KEY                        # приватный ssh-ключ (cd ~/.ssh/id_rsa)
+PASSPHRASE                     # кодовая фраза (пароль) для ssh-ключа
+
+TELEGRAM_TO                    # id телеграм-аккаунта (можно узнать у @userinfobot, команда /start)
+TELEGRAM_TOKEN                 # токен бота (получить токен можно у @BotFather, /token, имя бота)
+```
+
+При push в ЛЮБУЮ ветку автоматически отрабатывают сценарии:
+* *tests* - проверка кода на соответствие стандарту PEP8.
+
+При push в ветку main автоматически отрабатывают сценарии:
+* *build\_and\_push\_to\_docker\_hub* - сборка и доставка докер-образов на DockerHub
+* *deploy* - автоматический деплой проекта на боевой сервер. Выполняется копирование файлов из DockerHub на сервер;
+* *send\_message* - отправка уведомления в Telegram.
+
 Структура каталогов
 backend/: Код бэкенд-сервиса.
 
